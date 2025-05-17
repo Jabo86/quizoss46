@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulazione Concorso Operatore Socio Sanitario - Modulo 17</title>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+            margin: 0;
+            padding: 20px;
+            color: #f0f0f0;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2.5em;
+            color: #ffd700;
+            text-shadow: 0 0 10px #ffd700, 0 0 20px #ffd700;
+            animation: glow 2s infinite alternate;
+        }
+
+        @keyframes glow {
+            from { text-shadow: 0 0 10px #ffd700, 0 0 20px #ffd700; }
+            to { text-shadow: 0 0 20px #ffd700, 0 0 30px #ffd700; }
+        }
+
+        #timer {
+            text-align: center;
+            margin: 20px 0;
+            font-size: 1.5em;
+            color: #00eaff;
+            text-shadow: 0 0 5px #00eaff;
+        }
+
+        .question-nav {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .question-box {
+            width: 40px;
+            height: 40px;
+            margin: 8px;
+            background: linear-gradient(45deg, #333, #555);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            color: #fff;
+            font-weight: bold;
+        }
+
+        .question-box:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 15px #ffd700;
+        }
+
+        .question-box.answered {
+            background: linear-gradient(45deg, #ffd700, #ffaa00);
+            box-shadow: 0 0 15px #ffd700;
+        }
+
+        .question {
+            margin-bottom: 20px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .question.active {
+            display: block;
+        }
+
+        .question h3 {
+            margin: 0 0 15px 0;
+            color: #ffffff;
+            font-size: 1.6em;
+            text-shadow: 0 0 3px rgba(255, 255, 255, 0.5);
+            line-height: 1.4;
+        }
+
+        .option {
+            margin: 10px 0;
+            padding: 12px;
+            display: flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.25);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            color: #ffffff;
+            font-size: 1.2em;
+            font-weight: 500;
+        }
+
+        .option:hover {
+            background: rgba(255, 255, 255, 0.35);
+            transform: translateX(5px);
+        }
+
+        .option.correct {
+            background: linear-gradient(90deg, #00eaff, #00b8d4);
+            color: #fff;
+            box-shadow: 0 0 15px #00eaff;
+        }
+
+        .option.wrong {
+            background: linear-gradient(90deg, #ff5252, #d81b60);
+            color: #fff;
+            box-shadow: 0 0 15px #ff5252;
+        }
+
+        .lamp {
+            display: none;
+            margin-left: 15px;
+            cursor: pointer;
+            font-size: 1.5em;
+            color: #ffd700;
+            text-shadow: 0 0 10px #ffd700;
+            transition: transform 0.3s ease;
+        }
+
+        .lamp:hover {
+            transform: scale(1.2);
+        }
+
+        .explanation {
+            margin-top: 15px;
+            font-style: italic;
+            color: #f0f0f0;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 10px;
+            border-radius: 5px;
+            display: none;
+            animation: slideIn 0.5s ease;
+            font-size: 1.1em;
+            line-height: 1.5;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin: 20px 0;
+        }
+
+        .nav-button {
+            padding: 12px 25px;
+            background: linear-gradient(45deg, #ffd700, #ffaa00);
+            color: #1a1a2e;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1.2em;
+            box-shadow: 0 0 10px #ffd700;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+
+        .nav-button:disabled {
+            background: #666;
+            color: #ccc;
+            box-shadow: none;
+            cursor: not-allowed;
+        }
+
+        .nav-button:hover:not(:disabled) {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px #ffd700;
+        }
+
+        button#submit {
+            display: block;
+            width: 250px;
+            margin: 20px auto;
+            padding: 15px;
+            background: linear-gradient(45deg, #00eaff, #00b8d4);
+            color: #1a1a2e;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1.3em;
+            box-shadow: 0 0 15px #00eaff;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+
+        button#submit:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 25px #00eaff;
+        }
+
+        #result {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 1.8em;
+            color: #ffd700;
+            text-shadow: 0 0 10px #ffd700;
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <h1>Simulazione Concorso Operatore Socio Sanitario - Modulo 17</h1>
+        <div class="question-nav" id="questionNav"></div>
+        <div id="timer">Tempo rimanente: <span id="time">30:00</span></div>
+        <div id="quiz"></div>
+        <div class="navigation">
+            <button class="nav-button" id="prev" disabled>⬅ Indietro</button>
+            <button class="nav-button" id="next">Avanti ➡</button>
+        </div>
+        <button id="submit">Invia Risposte</button>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        // Array di domande (481-510) con opzioni mescolate casualmente
+        const questions = [
+            {
+                question: "Cos’è la gastrite?",
+                options: ["Un’infiammazione della vescica", "Un’infiammazione della mucosa gastrica", "Un accumulo di liquido nei polmoni"],
+                correct: "Un’infiammazione della mucosa gastrica",
+                explanation: "La gastrite è un’infiammazione della mucosa gastrica, spesso causata da Helicobacter pylori, farmaci o alcol, con sintomi come dolore epigastrico e nausea. Non è un’infiammazione della vescica né un edema polmonare. Gli OSS devono monitorare i sintomi, garantire una dieta leggera e segnalare vomito."
+            },
+            {
+                question: "Quale è un segno tipico della gastrite?",
+                options: ["Dolore epigastrico", "Poliuria", "Ittero"],
+                correct: "Dolore epigastrico",
+                explanation: "Il dolore epigastrico, spesso bruciante, è un segno tipico della gastrite, accompagnato da nausea o senso di pienezza. La poliuria e l’ittero non sono correlati. Gli OSS devono osservare l’alimentazione, monitorare il dolore e segnalare sintomi persistenti."
+            },
+            {
+                question: "Cos’è l’ulcera gastrica?",
+                options: ["Un’infiammazione del fegato", "Una lesione della mucosa gastrica", "Un blocco renale"],
+                correct: "Una lesione della mucosa gastrica",
+                explanation: "L’ulcera gastrica è una lesione della mucosa gastrica, spesso causata da Helicobacter pylori o FANS, con sintomi come dolore e sanguinamento. Non è un’infiammazione del fegato né un blocco renale. Gli OSS devono monitorare le feci per melena, garantire farmaci antiacidi e segnalare sintomi."
+            },
+            {
+                question: "Quale è un segno tipico dell’ulcera gastrica?",
+                options: ["Dolore post-prandiale", "Oliguria", "Ittero"],
+                correct: "Dolore post-prandiale",
+                explanation: "Il dolore post-prandiale, che peggiora dopo i pasti, è un segno tipico dell’ulcera gastrica. L’oliguria e l’ittero non sono correlati. Gli OSS devono monitorare il dolore, evitare cibi irritanti e segnalare segni di sanguinamento come melena."
+            },
+            {
+                question: "Cos’è la colite ulcerosa?",
+                options: ["Un’infiammazione della vescica", "Una malattia infiammatoria cronica dell’intestino", "Un accumulo di liquido nei polmoni"],
+                correct: "Una malattia infiammatoria cronica dell’intestino",
+                explanation: "La colite ulcerosa è una malattia infiammatoria cronica che colpisce il colon, con sintomi come diarrea sanguinolenta e dolore addominale. Non è un’infiammazione della vescica né un edema polmonare. Gli OSS devono monitorare le feci, garantire idratazione e segnalare sintomi gravi."
+            },
+            {
+                question: "Quale è un segno tipico della colite ulcerosa?",
+                options: ["Diarrea sanguinolenta", "Poliuria", "Ittero"],
+                correct: "Diarrea sanguinolenta",
+                explanation: "La diarrea sanguinolenta, spesso con muco, è un segno tipico della colite ulcerosa. La poliuria e l’ittero non sono correlati. Gli OSS devono misurare la frequenza delle scariche, garantire l’igiene e segnalare disidratazione."
+            },
+            {
+                question: "Cos’è il morbo di Crohn?",
+                options: ["Un’infiammazione del fegato", "Una malattia infiammatoria cronica dell’intestino", "Un blocco renale"],
+                correct: "Una malattia infiammatoria cronica dell’intestino",
+                explanation: "Il morbo di Crohn è una malattia infiammatoria cronica che può colpire tutto il tratto digerente, con sintomi come dolore addominale e diarrea. Non è un’infiammazione del fegato né un blocco renale. Gli OSS devono monitorare i sintomi, garantire una dieta adeguata e segnalare ostruzioni."
+            },
+            {
+                question: "Quale è un segno tipico del morbo di Crohn?",
+                options: ["Dolore addominale", "Oliguria", "Ittero"],
+                correct: "Dolore addominale",
+                explanation: "Il dolore addominale, spesso a destra, è un segno tipico del morbo di Crohn, accompagnato da diarrea o febbre. L’oliguria e l’ittero non sono correlati. Gli OSS devono monitorare il dolore, osservare le feci e segnalare sintomi sistemici."
+            },
+            {
+                question: "Cos’è la pancreatite?",
+                options: ["Un’infiammazione della vescica", "Un’infiammazione del pancreas", "Un accumulo di liquido nei polmoni"],
+                correct: "Un’infiammazione del pancreas",
+                explanation: "La pancreatite è un’infiammazione del pancreas, spesso causata da calcoli biliari o alcol, con sintomi come dolore addominale acuto e nausea. Non è un’infiammazione della vescica né un edema polmonare. Gli OSS devono monitorare il dolore, garantire il digiuno e segnalare vomito."
+            },
+            {
+                question: "Quale è un segno tipico della pancreatite?",
+                options: ["Dolore addominale irradiato", "Poliuria", "Ittero"],
+                correct: "Dolore addominale irradiato",
+                explanation: "Il dolore addominale irradiato alla schiena è un segno tipico della pancreatite acuta. La poliuria e l’ittero possono essere secondari, ma non primari. Gli OSS devono monitorare il dolore, evitare l’alimentazione orale e segnalare sintomi gravi."
+            },
+            {
+                question: "Cos’è la colecistite?",
+                options: ["Un’infiammazione del fegato", "Un’infiammazione della cistifellea", "Un blocco renale"],
+                correct: "Un’infiammazione della cistifellea",
+                explanation: "La colecistite è un’infiammazione della cistifellea, spesso causata da calcoli biliari, con sintomi come dolore al quadrante superiore destro e febbre. Non è un’infiammazione del fegato né un blocco renale. Gli OSS devono monitorare la febbre, garantire il digiuno e segnalare dolore."
+            },
+            {
+                question: "Quale è un segno tipico della colecistite?",
+                options: ["Dolore al quadrante superiore destro", "Oliguria", "Ittero"],
+                correct: "Dolore al quadrante superiore destro",
+                explanation: "Il dolore al quadrante superiore destro, spesso con segno di Murphy, è un segno tipico della colecistite. L’oliguria e l’ittero possono essere secondari. Gli OSS devono monitorare il dolore, evitare cibi grassi e segnalare sintomi come febbre."
+            },
+            {
+                question: "Cos’è l’epatite?",
+                options: ["Un’infiammazione della vescica", "Un’infiammazione del fegato", "Un accumulo di liquido nei polmoni"],
+                correct: "Un’infiammazione del fegato",
+                explanation: "L’epatite è un’infiammazione del fegato, spesso causata da virus (es. HBV, HCV), alcol o farmaci, con sintomi come ittero e stanchezza. Non è un’infiammazione della vescica né un edema polmonare. Gli OSS devono monitorare il colorito, garantire l’igiene e segnalare sintomi."
+            },
+            {
+                question: "Quale è un segno tipico dell’epatite?",
+                options: ["Ittero", "Poliuria", "Rigidità nucale"],
+                correct: "Ittero",
+                explanation: "L’ittero, ovvero la colorazione giallastra di pelle e sclere, è un segno tipico dell’epatite. La poliuria e la rigidità nucale non sono correlate. Gli OSS devono osservare la pelle, monitorare la stanchezza e segnalare sintomi come febbre."
+            },
+            {
+                question: "Cos’è la cirrosi epatica?",
+                options: ["Un’infiammazione del fegato", "Una fibrosi cronica del fegato", "Un blocco renale"],
+                correct: "Una fibrosi cronica del fegato",
+                explanation: "La cirrosi epatica è una fibrosi cronica del fegato, spesso causata da alcol o epatite, con sintomi come ascite e ittero. Non è un’infiammazione acuta né un blocco renale. Gli OSS devono monitorare l’addome, garantire una dieta povera di sodio e segnalare edema."
+            },
+            {
+                question: "Quale è un segno tipico della cirrosi epatica?",
+                options: ["Ascite", "Oliguria", "Tremore"],
+                correct: "Ascite",
+                explanation: "L’ascite, ovvero l’accumulo di liquido nell’addome, è un segno tipico della cirrosi epatica avanzata. L’oliguria e il tremore non sono primari. Gli OSS devono misurare la circonferenza addominale, monitorare il peso e segnalare sintomi come dispnea."
+            },
+            {
+                question: "Cos’è l’appendicite?",
+                options: ["Un’infiammazione della vescica", "Un’infiammazione dell’appendice", "Un accumulo di liquido nei polmoni"],
+                correct: "Un’infiammazione dell’appendice",
+                explanation: "L’appendicite è un’infiammazione dell’appendice, spesso causata da un’ostruzione, con sintomi come dolore al quadrante inferiore destro e febbre. Non è un’infiammazione della vescica né un edema polmonare. Gli OSS devono monitorare il dolore, garantire il digiuno e segnalare febbre."
+            },
+            {
+                question: "Quale è un segno tipico dell’appendicite?",
+                options: ["Dolore al punto di McBurney", "Poliuria", "Ittero"],
+                correct: "Dolore al punto di McBurney",
+                explanation: "Il dolore al punto di McBurney, nel quadrante inferiore destro, è un segno tipico dell’appendicite. La poliuria e l’ittero non sono correlati. Gli OSS devono monitorare il dolore, evitare movimenti bruschi e segnalare sintomi come nausea."
+            },
+            {
+                question: "Cos’è la diverticolite?",
+                options: ["Un’infiammazione del fegato", "Un’infiammazione dei diverticoli intestinali", "Un blocco renale"],
+                correct: "Un’infiammazione dei diverticoli intestinali",
+                explanation: "La diverticolite è un’infiammazione dei diverticoli intestinali, spesso nel colon, con sintomi come dolore addominale e febbre. Non è un’infiammazione del fegato né un blocco renale. Gli OSS devono monitorare le feci, garantire una dieta adeguata e segnalare sintomi."
+            },
+            {
+                question: "Quale è un segno tipico della diverticolite?",
+                options: ["Dolore al quadrante inferiore sinistro", "Oliguria", "Ittero"],
+                correct: "Dolore al quadrante inferiore sinistro",
+                explanation: "Il dolore al quadrante inferiore sinistro è un segno tipico della diverticolite, spesso con febbre. L’oliguria e l’ittero non sono correlati. Gli OSS devono monitorare il dolore, garantire idratazione e segnalare sintomi come diarrea sanguinolenta."
+            },
+            {
+                question: "Cos’è l’occlusione intestinale?",
+                options: ["Un’infiammazione della vescica", "Un blocco del passaggio intestinale", "Un accumulo di liquido nei polmoni"],
+                correct: "Un blocco del passaggio intestinale",
+                explanation: "L’occlusione intestinale è un blocco del passaggio intestinale, spesso causato da aderenze o volvolo, con sintomi come dolore addominale e vomito. Non è un’infiammazione della vescica né un edema polmonare. Gli OSS devono monitorare il vomito, garantire il digiuno e segnalare sintomi."
+            },
+            {
+                question: "Quale è un segno tipico dell’occlusione intestinale?",
+                options: ["Vomito biliare", "Poliuria", "Ittero"],
+                correct: "Vomito biliare",
+                explanation: "Il vomito biliare, spesso con distensione addominale, è un segno tipico dell’occlusione intestinale. La poliuria e l’ittero non sono correlati. Gli OSS devono monitorare l’addome, evitare l’alimentazione orale e segnalare sintomi come dolore severo."
+            },
+            {
+                question: "Cos’è la stitichezza cronica?",
+                options: ["Un’infiammazione del fegato", "Una difficoltà persistente nell’evacuazione", "Un blocco renale"],
+                correct: "Una difficoltà persistente nell’evacuazione",
+                explanation: "La stitichezza cronica è una difficoltà persistente nell’evacuazione, spesso causata da dieta povera di fibre o sedentarietà, con sintomi come feci dure. Non è un’infiammazione del fegato né un blocco renale. Gli OSS devono promuovere una dieta ricca di fibre, garantire idratazione e segnalare sintomi."
+            },
+            {
+                question: "Quale è un segno tipico della stitichezza cronica?",
+                options: ["Feci dure", "Oliguria", "Ittero"],
+                correct: "Feci dure",
+                explanation: "Le feci dure, spesso con evacuazioni rare, sono un segno tipico della stitichezza cronica. L’oliguria e l’ittero non sono correlati. Gli OSS devono monitorare le evacuazioni, promuovere l’attività fisica e segnalare dolore addominale."
+            },
+            {
+                question: "Cos’è la diarrea acuta?",
+                options: ["Un’infiammazione della vescica", "Un aumento delle scariche liquide", "Un accumulo di liquido nei polmoni"],
+                correct: "Un aumento delle scariche liquide",
+                explanation: "La diarrea acuta è un aumento delle scariche liquide, spesso causata da infezioni virali o batteriche, con rischio di disidratazione. Non è un’infiammazione della vescica né un edema polmonare. Gli OSS devono garantire idratazione, monitorare le feci e segnalare sintomi."
+            },
+            {
+                question: "Quale è un segno tipico della diarrea acuta?",
+                options: ["Scariche liquide frequenti", "Poliuria", "Ittero"],
+                correct: "Scariche liquide frequenti",
+                explanation: "Le scariche liquide frequenti sono un segno tipico della diarrea acuta, spesso con crampi addominali. La poliuria e l’ittero non sono correlati. Gli OSS devono misurare la diuresi, garantire soluzioni reidratanti e segnalare disidratazione."
+            },
+            {
+                question: "Cos’è il reflusso gastroesofageo (GERD)?",
+                options: ["Un’infiammazione del fegato", "Un ritorno di acido gastrico nell’esofago", "Un blocco renale"],
+                correct: "Un ritorno di acido gastrico nell’esofago",
+                explanation: "Il reflusso gastroesofageo è il ritorno di acido gastrico nell’esofago, con sintomi come pirosi e rigurgito. Non è un’infiammazione del fegato né un blocco renale. Gli OSS devono monitorare i sintomi, garantire una posizione semi-seduta e segnalare dolore toracico."
+            },
+            {
+                question: "Quale è un segno tipico del reflusso gastroesofageo?",
+                options: ["Pirosi", "Oliguria", "Ittero"],
+                correct: "Pirosi",
+                explanation: "La pirosi, ovvero il bruciore retrosternale, è un segno tipico del reflusso gastroesofageo. L’oliguria e l’ittero non sono correlati. Gli OSS devono evitare cibi trigger, monitorare i sintomi e segnalare tosse notturna."
+            },
+            {
+                question: "Cos’è l’esofagite?",
+                options: ["Un’infiammazione della vescica", "Un’infiammazione dell’esofago", "Un accumulo di liquido nei polmoni"],
+                correct: "Un’infiammazione dell’esofago",
+                explanation: "L’esofagite è un’infiammazione dell’esofago, spesso causata da reflusso acido o infezioni, con sintomi come disfagia e dolore toracico. Non è un’infiammazione della vescica né un edema polmonare. Gli OSS devono monitorare la deglutizione, garantire una dieta morbida e segnalare sintomi."
+            },
+            {
+                question: "Quale è un segno tipico dell’esofagite?",
+                options: ["Disfagia", "Poliuria", "Ittero"],
+                correct: "Disfagia",
+                explanation: "La disfagia, ovvero la difficoltà a deglutire, è un segno tipico dell’esofagite. La poliuria e l’ittero non sono correlati. Gli OSS devono osservare l’alimentazione, evitare cibi irritanti e segnalare dolore o ostruzione."
+            },
+            {
+                question: "Cos’è la steatosi epatica?",
+                options: ["Un’infiammazione del fegato", "Un accumulo di grasso nel fegato", "Un blocco renale"],
+                correct: "Un accumulo di grasso nel fegato",
+                explanation: "La steatosi epatica (fegato grasso) è un accumulo di grasso nel fegato, spesso associato a obesità o alcol, con sintomi minimi o stanchezza. Non è un’infiammazione acuta né un blocco renale. Gli OSS devono monitorare il peso, promuovere una dieta sana e segnalare sintomi."
+            },
+            {
+                question: "Quale è un segno tipico della steatosi epatica?",
+                options: ["Stanchezza", "Oliguria", "Rigidità nucale"],
+                correct: "Stanchezza",
+                explanation: "La stanchezza è un segno tipico della steatosi epatica, anche se spesso è asintomatica. L’oliguria e la rigidità nucale non sono correlate. Gli OSS devono monitorare il benessere generale, garantire una dieta equilibrata e segnalare dolore addominale."
+            },
+            {
+                question: "Cos’è l’ileo paralitico?",
+                options: ["Un’infiammazione della vescica", "Un arresto della motilità intestinale", "Un accumulo di liquido nei polmoni"],
+                correct: "Un arresto della motilità intestinale",
+                explanation: "L’ileo paralitico è un arresto temporaneo della motilità intestinale, spesso post-chirurgico, con sintomi come distensione addominale e vomito. Non è un’infiammazione della vescica né un edema polmonare. Gli OSS devono monitorare l’addome, garantire il digiuno e segnalare sintomi."
+            },
+            {
+                question: "Quale è un segno tipico dell’ileo paralitico?",
+                options: ["Distensione addominale", "Poliuria", "Ittero"],
+                correct: "Distensione addominale",
+                explanation: "La distensione addominale, con assenza di rumori intestinali, è un segno tipico dell’ileo paralitico. La poliuria e l’ittero non sono correlati. Gli OSS devono misurare la circonferenza addominale, monitorare il vomito e segnalare sintomi persistenti."
+            }
+        ];
+
+        let currentQuestion = 0;
+
+        // Carica i quadratini di navigazione
+        function loadQuestionNav() {
+            const navDiv = document.getElementById("questionNav");
+            questions.forEach((_, index) => {
+                const box = document.createElement("div");
+                box.classList.add("question-box");
+                box.textContent = index + 1;
+                box.addEventListener("click", () => {
+                    showQuestion(index);
+                });
+                navDiv.appendChild(box);
+            });
+        }
+
+        // Carica il quiz
+        function loadQuiz() {
+            const quizDiv = document.getElementById("quiz");
+            questions.forEach((q, index) => {
+                const questionDiv = document.createElement("div");
+                questionDiv.classList.add("question");
+                questionDiv.id = `question-${index}`;
+                questionDiv.innerHTML = `
+                    <h3>${index + 1}. ${q.question}</h3>
+                    ${q.options.map((opt, i) => `
+                        <div class="option" data-value="${opt}">
+                            <input type="radio" name="q${index}" value="${opt}" id="q${index}_${i}">
+                            <label for="q${index}_${i}">${opt}</label>
+                            <span class="lamp" id="lamp-${index}-${i}">💡</span>
+                        </div>
+                    `).join("")}
+                    <div class="explanation" id="exp-${index}">${q.explanation}</div>
+                `;
+                quizDiv.appendChild(questionDiv);
+
+                // Aggiungi evento per accendere il quadratino
+                const radios = questionDiv.querySelectorAll(`input[name="q${index}"]`);
+                radios.forEach(radio => {
+                    radio.addEventListener("change", () => {
+                        document.querySelectorAll(".question-box")[index].classList.add("answered");
+                    });
+                });
+            });
+            showQuestion(0); // Mostra la prima domanda
+        }
+
+        // Mostra la domanda corrente
+        function showQuestion(index) {
+            document.querySelectorAll(".question").forEach(q => q.classList.remove("active"));
+            document.getElementById(`question-${index}`).classList.add("active");
+            currentQuestion = index;
+
+            // Gestione stato pulsanti
+            document.getElementById("prev").disabled = currentQuestion === 0;
+            document.getElementById("next").disabled = currentQuestion === questions.length - 1;
+        }
+
+        // Timer (30 minuti)
+        let timeLeft = 30 * 60;
+        function startTimer() {
+            const timer = setInterval(() => {
+                timeLeft--;
+                const minutes = Math.floor(timeLeft / 60);
+                const seconds = timeLeft % 60;
+                document.getElementById("time").textContent = 
+                    `${minutes}:${seconds < 10 ? "0" + seconds : seconds}`;
+                
+                if (timeLeft <= 0) {
+                    clearInterval(timer);
+                    checkAnswers();
+                }
+            }, 1000);
+        }
+
+        // Controllo risposte e feedback visivo
+        function checkAnswers() {
+            let score = 0;
+            questions.forEach((q, index) => {
+                const selected = document.querySelector(`input[name="q${index}"]:checked`);
+                const options = document.querySelectorAll(`#question-${index} .option`);
+
+                options.forEach(option => {
+                    const value = option.getAttribute("data-value");
+                    if (value === q.correct) {
+                        option.classList.add("correct");
+                        const lamp = option.querySelector(".lamp");
+                        lamp.style.display = "inline";
+                        lamp.addEventListener("click", () => {
+                            const explanation = document.getElementById(`exp-${index}`);
+                            explanation.style.display = "block";
+                        });
+                    }
+                });
+
+                if (selected) {
+                    if (selected.value === q.correct) {
+                        score++;
+                    } else {
+                        selected.parentElement.classList.add("wrong");
+                    }
+                }
+            });
+
+            const resultDiv = document.getElementById("result");
+            resultDiv.textContent = `Punteggio: ${score} / ${questions.length}`;
+            document.getElementById("submit").disabled = true;
+            document.getElementById("prev").disabled = true;
+            document.getElementById("next").disabled = true;
+
+            // Disabilita i radio button dopo l'invio
+            document.querySelectorAll("input[type=radio]").forEach(radio => {
+                radio.disabled = true;
+            });
+        }
+
+        // Inizializzazione
+        window.onload = () => {
+            loadQuestionNav();
+            loadQuiz();
+            startTimer();
+
+            document.getElementById("prev").addEventListener("click", () => {
+                if (currentQuestion > 0) showQuestion(currentQuestion - 1);
+            });
+
+            document.getElementById("next").addEventListener("click", () => {
+                if (currentQuestion < questions.length - 1) showQuestion(currentQuestion + 1);
+            });
+
+            document.getElementById("submit").addEventListener("click", checkAnswers);
+        };
+    </script>
+</body>
+</html>
